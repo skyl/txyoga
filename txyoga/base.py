@@ -53,9 +53,14 @@ class Element(object):
 
         @raise L{ForbiddenAttributeUpdateError}
         """
-        if any(attr not in self.updatableAttributes for attr in state):
-            requested, allowed = list(state), self.updatableAttributes
-            raise errors.ForbiddenAttributeUpdateError(requested, allowed)
+
+        bads = []
+        for attr in state:
+            if attr not in self.updatableAttributes:
+                bads.append(attr)
+
+        for b in bads:
+            del state[b]
 
         for attr, value in state.iteritems():
             setattr(self, attr, value)
